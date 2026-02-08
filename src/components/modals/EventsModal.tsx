@@ -1,4 +1,14 @@
-// Модальное окно событий/уведомлений
+/**
+ * EventsModal — окно событий/уведомлений
+ *
+ * Legacy: EventMessagesView.js (Ext.grid.Panel)
+ * API: eventsMessages.loadObjects({uids, period, from, to})
+ *      eventsMessages.getUpdatedAfter() — polling новых событий
+ *
+ * Типы событий: вход/выход геозоны, превышение скорости,
+ * отключение питания, SOS, низкий уровень топлива.
+ * Фильтры: по объекту, периоду, прочитанности.
+ */
 import { useState, useEffect } from 'react';
 import { Bell, CheckCheck, AlertTriangle, Info, XCircle } from 'lucide-react';
 import { Modal } from './ModalManager';

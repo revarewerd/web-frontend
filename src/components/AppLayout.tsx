@@ -1,4 +1,19 @@
-// Основной Layout приложения (как в ExtJS: border layout)
+/**
+ * AppLayout — главный layout мониторинга (аналог Ext.container.Viewport)
+ *
+ * Legacy: app.js → Ext.container.Viewport с border layout:
+ *   north:  Toolbar (верхняя панель с меню)
+ *   west:   LeftPanel 420px (список объектов/групп)
+ *   center: MapView (OpenLayers карта)
+ *   south:  BottomToolbar (таскбар открытых окон)
+ *
+ * + ModalManager — рендерит модальные окна поверх всего.
+ * CSS: index.css → .app-layout, .left-panel, .map-container
+ */
+// region: west = leftpanel (width: 420)
+// region: center = mainmap
+// region: south = reporttoolbar
+
 import { useState, useEffect } from 'react';
 import { Toolbar } from './Toolbar';
 import { LeftPanel } from './LeftPanel';
@@ -10,8 +25,6 @@ import { fetchVehicles, fetchGeozones, fetchCurrentUser, fetchUserSettings, getU
 
 export function AppLayout() {
   const {
-    leftPanelWidth,
-    leftPanelCollapsed,
     setVehicles,
     setGeozones,
     setUser,
@@ -46,39 +59,31 @@ export function AppLayout() {
     }
     
     loadInitialData();
-  }, []);
+  }, [setVehicles, setGeozones, setUser, setUserSettings, setUnreadCount]);
 
   if (loading) {
     return (
-      <div style={{ height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f0f0' }}>
+      <div className="app-viewport" style={{ alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#15498b' }}>Загрузка...</div>
+          <img src="/images/ico24_loading.png" alt="" style={{ marginBottom: 8 }} />
+          <div style={{ fontSize: 12, color: '#666' }}>Загрузка...</div>
         </div>
       </div>
     );
   }
 
-  const effectiveLeftWidth = leftPanelCollapsed ? 0 : leftPanelWidth;
-
   return (
-    <div className="app-container">
+    <div className="app-viewport">
       {/* North - Toolbar */}
       <Toolbar />
       
-      {/* Center container */}
-      <div className="main-content">
-        {/* West - Left Panel */}
-        <div 
-          className="left-panel"
-          style={{ width: effectiveLeftWidth, transition: 'width 0.2s' }}
-        >
-          <LeftPanel />
-        </div>
+      {/* Main container (center + west) */}
+      <div className="main-container">
+        {/* West - Left Panel (width: 420 как в оригинале) */}
+        <LeftPanel />
         
         {/* Center - Map */}
-        <div className="map-container">
-          <MapView />
-        </div>
+        <MapView />
       </div>
       
       {/* South - Bottom Toolbar */}

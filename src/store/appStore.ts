@@ -1,4 +1,24 @@
-// Глобальный стор приложения (Zustand)
+/**
+ * =====================================================
+ * Zustand Store — глобальное состояние мониторинга
+ * =====================================================
+ *
+ * Zustand — лёгкий state manager (альтернатива Redux).
+ * Использование: const { vehicles, setVehicles } = useAppStore();
+ *
+ * Legacy аналоги (каждый был отдельным Ext.data.Store):
+ *   vehicles        ← EDS.store.MapObjects (mapObjects.loadObjects)
+ *   geozones        ← EDS.store.GeozonesData (geozonesData.loadObjects)
+ *   events          ← EDS.store.EventsMessages (eventsMessages.loadObjects)
+ *   userSettings    ← userInfo.getSettings()
+ *
+ * Polling (legacy каждые 2 сек):
+ *   lastUpdateTime → mapObjects.getUpdatedAfter(timestamp)
+ *   unreadCount    → eventsMessages.getUnreadUserMessagesCount()
+ *
+ * Модальные окна (legacy — Ext.window.Window):
+ *   activeModal + modalProps → ModalManager.tsx рендерит нужное окно
+ */
 import { create } from 'zustand';
 import type { Vehicle, Geozone, EventMessage, UserSettings, User } from '@/types';
 
@@ -174,9 +194,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   addEvents: (newEvents) => set((state) => ({
     events: [...newEvents, ...state.events].slice(0, 500), // Храним максимум 500
   })),
-  markEventRead: (eid) => set((state) => ({
+  markEventRead: (eventId) => set((state) => ({
     events: state.events.map(e => 
-      e.eid === eid ? { ...e, readStatus: true } : e
+      e.id === eventId ? { ...e, isRead: true } : e
     ),
     unreadCount: Math.max(0, state.unreadCount - 1),
   })),

@@ -1,4 +1,19 @@
-// Карта OpenLayers
+/**
+ * MapView — карта OpenLayers (center region)
+ *
+ * Legacy: OpenLayers 2.x + Ext.panel.Panel (region: 'center')
+ * Новый: OpenLayers 10 (ol пакет)
+ *
+ * Слои карты:
+ *   - OSM (OpenStreetMap) — базовый слой
+ *   - Legacy также поддерживал Google Maps и Яндекс Карты
+ *   - Маркеры объектов (Vehicle[]) — иконки авто с поворотом
+ *   - Треки (polyline из GPS-точек)
+ *   - Геозоны (polygon с цветной заливкой)
+ *
+ * API для маркеров: mapObjects.getLonLat(uids)
+ * API для треков: /pathdata?data=speedgraph (сервлет)
+ */
 import { useEffect, useRef, useState } from 'react';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -209,10 +224,10 @@ export function MapView() {
 
   return (
     <div className="map-container">
-      <div ref={mapRef} className="w-full h-full" />
+      <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
       
       {/* Popup */}
-      <div ref={popupRef} className="bg-white border border-gray-300 rounded shadow-lg p-0 min-w-[200px]">
+      <div ref={popupRef} style={{ background: '#fff', border: '1px solid #b5b8c8', borderRadius: 4, boxShadow: '2px 2px 6px rgba(0,0,0,0.2)', minWidth: 200 }}>
         {selectedVehicle && (
           <VehiclePopup vehicle={selectedVehicle} onClose={() => setSelectedVehicle(null)} />
         )}

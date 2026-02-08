@@ -1,4 +1,12 @@
-// Модальное окно групп объектов
+/**
+ * GroupsModal — управление группами объектов
+ *
+ * Legacy: ObjectGroupsWindow.js
+ * API: groupedMapObjects.loadObjects() (объекты с группировкой)
+ *
+ * Группы создаются в billing (web-billing), здесь только
+ * просмотр и фильтрация объектов по группам.
+ */
 import { useState, useEffect } from 'react';
 import { Folder, ChevronRight, ChevronDown, Check } from 'lucide-react';
 import { Modal } from './ModalManager';

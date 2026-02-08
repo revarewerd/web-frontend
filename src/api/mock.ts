@@ -1,9 +1,17 @@
-// API заглушки (моки) - имитация backend API
+/**
+ * Mock API — заглушки для разработки без бэкенда
+ *
+ * Заменяет все Ext.Direct вызовы из legacy.
+ * Когда бэкенд будет готов — заменить на TanStack Query hooks:
+ *   useQuery(['vehicles'], () => fetch('/api/v1/vehicles'))
+ */
 import type {
   Vehicle,
   Geozone,
   EventMessage,
   NotificationRule,
+  LegacyEventMessage,
+  LegacyNotificationRule,
   Sensor,
   SensorType,
   GPSPosition,
@@ -212,7 +220,7 @@ const mockGeozones: Geozone[] = [
   },
 ];
 
-const mockEvents: EventMessage[] = [
+const mockEvents: LegacyEventMessage[] = [
   {
     eid: 1,
     uid: 'o1001',
@@ -249,7 +257,7 @@ const mockEvents: EventMessage[] = [
   },
 ];
 
-const mockNotificationRules: NotificationRule[] = [
+const mockNotificationRules: LegacyNotificationRule[] = [
   {
     name: 'Превышение скорости',
     type: 'ntfSpeed',
@@ -384,7 +392,7 @@ export async function deleteGeozone(id: number): Promise<void> {
 
 // --- Events/Messages ---
 
-export async function fetchEvents(params: { uids?: string[]; from?: string; to?: string }): Promise<EventMessage[]> {
+export async function fetchEvents(params: { uids?: string[]; from?: string; to?: string }): Promise<LegacyEventMessage[]> {
   await delay(300);
   let events = [...mockEvents];
   if (params.uids && params.uids.length > 0) {
@@ -409,18 +417,18 @@ export async function markEventsAsRead(eids: number[]): Promise<void> {
 
 // --- Notification Rules ---
 
-export async function fetchNotificationRules(): Promise<NotificationRule[]> {
+export async function fetchNotificationRules(): Promise<LegacyNotificationRule[]> {
   await delay(200);
   return [...mockNotificationRules];
 }
 
-export async function createNotificationRule(rule: NotificationRule): Promise<NotificationRule> {
+export async function createNotificationRule(rule: LegacyNotificationRule): Promise<LegacyNotificationRule> {
   await delay(300);
   mockNotificationRules.push(rule);
   return rule;
 }
 
-export async function updateNotificationRule(rule: NotificationRule): Promise<void> {
+export async function updateNotificationRule(rule: LegacyNotificationRule): Promise<void> {
   await delay(300);
   const index = mockNotificationRules.findIndex(r => r.name === rule.name);
   if (index >= 0) {
@@ -506,7 +514,7 @@ export async function fetchTrackPositions(uid: string, from: Date, to: Date): Pr
     positions.push({
       lat: 55.72 + i * 0.0006,
       lon: 37.55 + i * 0.001,
-      time: start + i * step,
+      timestamp: start + i * step,
       speed: 30 + Math.random() * 40,
       course: 45 + Math.random() * 20,
     });
@@ -521,28 +529,22 @@ export async function fetchMovingReport(uids: string[], from: string, to: string
   await delay(500);
   return [
     {
-      num: 1,
-      uid: 'o1001',
-      name: 'КамАЗ-001',
+      vehicleId: 1001,
+      vehicleName: 'КамАЗ-001',
       startTime: Date.now() - 7200000,
       endTime: Date.now() - 3600000,
-      startAddress: 'г. Москва, ул. Ленина, 1',
-      endAddress: 'г. Москва, ул. Пушкина, 15',
       distance: 25.4,
+      duration: 3600000,
       maxSpeed: 72,
-      avgSpeed: 45,
     },
     {
-      num: 2,
-      uid: 'o1001',
-      name: 'КамАЗ-001',
+      vehicleId: 1001,
+      vehicleName: 'КамАЗ-001',
       startTime: Date.now() - 3000000,
       endTime: Date.now() - 1800000,
-      startAddress: 'г. Москва, ул. Пушкина, 15',
-      endAddress: 'г. Москва, Склад №1',
       distance: 12.8,
+      duration: 1200000,
       maxSpeed: 65,
-      avgSpeed: 38,
     },
   ];
 }
@@ -551,9 +553,8 @@ export async function fetchParkingReport(uids: string[], from: string, to: strin
   await delay(500);
   return [
     {
-      num: 1,
-      uid: 'o1001',
-      name: 'КамАЗ-001',
+      vehicleId: 1001,
+      vehicleName: 'КамАЗ-001',
       startTime: Date.now() - 3600000,
       endTime: Date.now() - 3000000,
       duration: 600000,
@@ -568,12 +569,12 @@ export async function fetchFuelingReport(uids: string[], from: string, to: strin
   await delay(500);
   return [
     {
-      num: 1,
-      uid: 'o1001',
-      name: 'КамАЗ-001',
-      time: Date.now() - 5400000,
-      type: 'fueling',
-      volume: 120,
+      vehicleId: 1001,
+      vehicleName: 'КамАЗ-001',
+      timestamp: Date.now() - 5400000,
+      volumeBefore: 30,
+      volumeAfter: 150,
+      volumeAdded: 120,
       address: 'АЗС Лукойл',
       lon: 37.55,
       lat: 55.71,
@@ -615,8 +616,8 @@ export async function logout(): Promise<void> {
 export async function fetchVehicleGroups(): Promise<VehicleGroup[]> {
   await delay(200);
   return [
-    { id: 1, name: 'Грузовики', vehicles: ['o1001', 'o1003'] },
-    { id: 2, name: 'Легковые', vehicles: ['o1004'] },
+    { id: 1, name: 'Грузовики', vehicleIds: [1001, 1003] },
+    { id: 2, name: 'Легковые', vehicleIds: [1004] },
   ];
 }
 

@@ -1,4 +1,12 @@
-// Модальное окно редактора геозон
+/**
+ * GeozonesModal — редактор геозон
+ *
+ * Legacy: GeozonesView.js (Ext.window.Window + OpenLayers drawing)
+ * API: geozonesData.loadObjects/addGeozone/editGeozone/delGeozone
+ *
+ * Геозона = полигон на карте (склад, заправка, зона доставки).
+ * Используется для правил уведомлений ("въехал в зону X").
+ */
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit, Save, X } from 'lucide-react';
 import { Modal } from './ModalManager';

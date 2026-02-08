@@ -1,4 +1,13 @@
-// Модальное окно правил уведомлений
+/**
+ * NotificationRulesModal — правила уведомлений
+ *
+ * Legacy: NotificationRulesView.js (Ext.grid.Panel)
+ * API: notificationRules.loadObjects/add/upd/del
+ *
+ * Правило = "когда X произойдёт, отправить Y".
+ * Типы: вход/выход геозоны, скорость, потеря связи.
+ * Действия: email, SMS, push, звук в браузере.
+ */
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit, Save, X, Bell, BellOff } from 'lucide-react';
 import { Modal } from './ModalManager';

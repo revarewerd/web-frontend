@@ -1,4 +1,13 @@
-// Модальное окно отображения трека
+/**
+ * TrackDisplayModal — отображение трека на карте
+ *
+ * Legacy: PathDataView.js + PathDataBigView.js
+ * API: /pathdata?data=speedgraph (сервлет PathDataServlet)
+ * Графики: Dygraph (legacy) → можно Chart.js или Recharts
+ *
+ * Показывает маршрут объекта за период:
+ * polyline на карте + график скорости/топлива.
+ */
 import { useState, useEffect, useRef } from 'react';
 import { Route, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import Map from 'ol/Map';

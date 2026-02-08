@@ -1,4 +1,11 @@
-// Модальное окно отчёта по пробегу
+/**
+ * MovingReportModal — отчёт по пробегу/поездкам
+ *
+ * Legacy: MovingReport.js / MovementStatsReport.js
+ * API: movingReport.loadData(uid, from, to)
+ *      movementStatsReport.loadData(uid, from, to)
+ * Экспорт: /generatePDF/moving.pdf, /generateXLS/moving.xls
+ */
 import { useState } from 'react';
 import { FileText, Download, Search } from 'lucide-react';
 import { Modal } from './ModalManager';

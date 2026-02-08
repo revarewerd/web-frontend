@@ -1,4 +1,18 @@
-// Верхний тулбар (точная копия ExtJS Stels)
+/**
+ * Toolbar — верхняя панель мониторинга (north region)
+ *
+ * Legacy: app.js → tbar (Ext.toolbar.Toolbar)
+ * Элементы (слева→направо):
+ *   [Мониторинг▼] [Отчёт▼] [Инструменты▼] [Баланс▼] | Имя пользователя | [RU▼] | [📱] [Выход]
+ *
+ * Каждый dropdown открывает меню с пунктами:
+ *   Мониторинг: Показать объекты, События, Геозоны, Группы
+ *   Отчёт: Общий, Топливный, Групповой, Адресный
+ *   Инструменты: Правила уведомлений, Настройки пользователя
+ *   Баланс: Детализация абон.платы, Платежи за SMS
+ *
+ * API: userInfo.getSettings(), userInfo.getAccount()
+ */
 import { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '@/store/appStore';
 
@@ -7,100 +21,115 @@ export function Toolbar() {
 
   return (
     <div className="x-toolbar">
-      {/* Logo */}
-      <a href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-        <img 
-          src="/images/logo.png" 
-          alt="Stels" 
-          className="x-logo"
-          onError={(e) => {
-            e.currentTarget.src = '/images/ico24_car.png';
-          }}
-        />
-        <span style={{ fontWeight: 'bold', color: '#15498b', fontSize: '14px' }}>Stels GPS</span>
+      {/* Logo - как в оригинале: homePageLink */}
+      <a href="/" className="x-logo-link" title="Главная страница">
+        <img src="/images/ksb_logo.png" alt="Stels" className="x-logo-img" />
       </a>
 
       <div className="x-toolbar-separator" />
 
-      {/* Отчёты */}
+      {/* Отчёты - itemId: 'reportsCtrl' */}
       <ToolbarDropdown
         icon="/images/ico24_report.png"
         label="Отчёты"
+        tooltip="Построение отчётов"
         items={[
-          { icon: '/images/ico16_car_move.png', label: 'Движение', onClick: () => openModal('report-moving') },
-          { icon: '/images/ico16_car_stop.png', label: 'Стоянки', onClick: () => openModal('report-parking') },
-          { icon: '/images/ico16_fuel.png', label: 'Заправки/Сливы', onClick: () => openModal('report-fueling') },
-          { divider: true },
-          { icon: '/images/ico16_route.png', label: 'Маршрут', onClick: () => openModal('report-path') },
-          { icon: '/images/ico16_address.png', label: 'Адреса', onClick: () => openModal('report-addresses') },
-          { icon: '/images/ico16_event.png', label: 'События', onClick: () => openModal('report-events') },
+          { icon: '/images/ico16_report.png', label: 'Общий отчёт', onClick: () => openModal('report-general') },
+          { icon: '/images/ico16_report.png', label: 'Топливный отчёт', onClick: () => openModal('report-fuel') },
+          { icon: '/images/ico16_report.png', label: 'Групповой отчёт', onClick: () => openModal('report-group') },
+          { icon: '/images/ico16_report.png', label: 'Адресный отчёт', onClick: () => openModal('report-address') },
         ]}
       />
 
-      {/* Уведомления */}
+      {/* Уведомления - itemId: 'notificationsCtrl' */}
       <ToolbarDropdown
         icon="/images/ico24_bell.png"
         label="Уведомления"
+        tooltip="Уведомления о событиях"
         badge={unreadCount > 0 ? unreadCount : undefined}
         items={[
-          { icon: '/images/ico16_bell.png', label: 'История событий', onClick: () => openModal('events-history') },
+          { icon: '/images/ico16_eventsmsgs.png', label: 'История событий', onClick: () => openModal('events-history') },
           { divider: true },
-          { icon: '/images/ico16_settings.png', label: 'Правила уведомлений', onClick: () => openModal('notification-rules') },
-          { icon: '/images/ico16_settings.png', label: 'Настройки', onClick: () => openModal('notification-settings') },
+          { icon: '/images/ico16_edit_def.png', label: 'Правила уведомлений', onClick: () => openModal('notification-rules') },
+          { icon: '/images/ico16_options.png', label: 'Настройки', onClick: () => openModal('notification-settings') },
         ]}
       />
 
-      {/* Геоинструменты */}
+      {/* Гео-инструменты - itemId: 'geoTools' */}
       <ToolbarDropdown
         icon="/images/ico24_geozone.png"
         label="Гео-инструменты"
+        tooltip="Работа с геозонами"
         items={[
           { icon: '/images/ico16_geozone.png', label: 'Геозоны', onClick: () => openModal('geozones') },
-          { icon: '/images/ico16_route.png', label: 'Маршруты', onClick: () => openModal('routes') },
-          { icon: '/images/ico16_poi.png', label: 'Точки интереса', onClick: () => openModal('poi') },
         ]}
       />
 
-      {/* Группы объектов */}
+      {/* Группы объектов - itemId: 'groupsOfObjects' */}
       <ToolbarButton
-        icon="/images/ico24_group.png"
+        icon="/images/cars/car_001_blu_24.png"
         label="Группы объектов"
+        tooltip="Группы объектов"
         onClick={() => openModal('vehicle-groups')}
       />
 
-      {/* Поддержка */}
+      {/* Поддержка - itemId: 'supportCtrl' */}
       <ToolbarDropdown
-        icon="/images/ico24_support.png"
+        icon="/images/ico24_question_def.png"
         label="Поддержка"
+        tooltip="Техническая поддержка"
         items={[
-          { icon: '/images/ico16_add.png', label: 'Новый запрос', onClick: () => openModal('support-new') },
-          { icon: '/images/ico16_list.png', label: 'Мои запросы', onClick: () => openModal('support-list') },
+          { icon: '/images/ico16_edit_def.png', label: 'Новый запрос', onClick: () => openModal('support-new') },
+          { icon: '/images/ico16_eventsmsgs.png', label: 'Мои запросы', onClick: () => openModal('support-list') },
         ]}
       />
 
-      {/* Spacer */}
-      <div style={{ flex: 1 }} />
+      {/* Spacer - '->' в ExtJS */}
+      <div className="x-toolbar-spacer" />
 
-      {/* Аккаунт */}
+      {/* Spacer 12px */}
+      <div style={{ width: 12 }} />
+
+      {/* Аккаунт: label */}
+      <span className="x-toolbar-text">Аккаунт:</span>
       {user && (
-        <>
-          <span style={{ fontSize: '11px', color: '#666' }}>Аккаунт:</span>
-          <span style={{ fontWeight: 'bold', fontSize: '11px', marginLeft: '4px' }}>{user.name}</span>
-          <div className="x-toolbar-separator" />
-        </>
+        <span className="x-toolbar-text-bold">{user.name}</span>
       )}
 
-      {/* Настройки пользователя */}
+      {/* Spacer 12px */}
+      <div style={{ width: 12 }} />
+
+      {/* Баланс - itemId: 'balanceCtrl' (как в legacy, условно показывается) */}
+      <ToolbarDropdown
+        icon="/images/ico24_coins.png"
+        label={user?.balance ? `${user.balance} р.` : '0.00 р.'}
+        tooltip="Баланс аккаунта"
+        items={[
+          { icon: '/images/ico16_report.png', label: 'Абонплата', onClick: () => openModal('subscription-fee') },
+          { icon: '/images/ico16_report.png', label: 'Стоимость уведомлений', onClick: () => openModal('notification-cost') },
+          { divider: true },
+          { icon: '/images/ico16_report.png', label: 'Пополнить баланс', onClick: () => openModal('top-up-balance') },
+        ]}
+      />
+
+      {/* Spacer 12px */}
+      <div style={{ width: 12 }} />
+
+      {/* Настройки пользователя - itemId: 'userSettings' */}
       <ToolbarButton
-        icon="/images/ico16_user.png"
+        icon="/images/ico24_user.png"
         label={user?.login || 'User'}
+        tooltip="Настройки пользователя"
         onClick={() => openModal('user-settings')}
       />
 
-      {/* Язык */}
+      {/* Spacer 12px */}
+      <div style={{ width: 12 }} />
+
+      {/* Выбор языка */}
       <ToolbarDropdown
-        icon="/images/ico16_lang.png"
         label="RU"
+        tooltip="Выбор языка"
         items={[
           { label: 'Русский', onClick: () => {} },
           { label: 'English', onClick: () => {} },
@@ -108,17 +137,21 @@ export function Toolbar() {
         ]}
       />
 
+      {/* Spacer 12px */}
+      <div style={{ width: 12 }} />
+
       {/* Мобильная версия */}
       <ToolbarButton
-        icon="/images/ico16_mobile.png"
-        onClick={() => window.location.href = '/mobile.html'}
+        icon="/images/ico24_mobile.png"
         tooltip="Мобильная версия"
+        onClick={() => { window.location.href = '/mobile.html'; }}
       />
 
       {/* Выход */}
       <ToolbarButton
-        icon="/images/ico16_logout.png"
+        icon="/images/ico24_shutdown.png"
         label="Выход"
+        tooltip="Выход из системы"
         onClick={() => {
           if (confirm('Выйти из системы?')) {
             window.location.href = '/logout';
@@ -131,7 +164,7 @@ export function Toolbar() {
 
 // Компонент кнопки в тулбаре
 interface ToolbarButtonProps {
-  icon: string;
+  icon?: string;
   label?: string;
   onClick?: () => void;
   tooltip?: string;
@@ -141,12 +174,12 @@ interface ToolbarButtonProps {
 function ToolbarButton({ icon, label, onClick, tooltip, disabled }: ToolbarButtonProps) {
   return (
     <button
-      className="x-btn"
+      className="x-btn x-btn-medium"
       onClick={onClick}
       disabled={disabled}
       title={tooltip || label}
     >
-      <img src={icon} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+      {icon && <img src={icon} alt="" className="x-btn-icon ico24" />}
       {label && <span>{label}</span>}
     </button>
   );
@@ -161,13 +194,14 @@ interface DropdownItem {
 }
 
 interface ToolbarDropdownProps {
-  icon: string;
+  icon?: string;
   label: string;
   items: DropdownItem[];
   badge?: number;
+  tooltip?: string;
 }
 
-function ToolbarDropdown({ icon, label, items, badge }: ToolbarDropdownProps) {
+function ToolbarDropdown({ icon, label, items, badge, tooltip }: ToolbarDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -185,28 +219,20 @@ function ToolbarDropdown({ icon, label, items, badge }: ToolbarDropdownProps) {
   return (
     <div style={{ position: 'relative' }} ref={ref}>
       <button
-        className="x-btn"
+        className="x-btn x-btn-medium"
         onClick={() => setOpen(!open)}
+        title={tooltip}
       >
-        <img src={icon} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+        {icon && <img src={icon} alt="" className="x-btn-icon ico24" />}
         <span>{label}</span>
         {badge !== undefined && (
-          <span style={{ 
-            background: '#d33', 
-            color: '#fff', 
-            borderRadius: '8px', 
-            padding: '0 5px', 
-            fontSize: '10px',
-            marginLeft: '4px'
-          }}>
-            {badge}
-          </span>
+          <span className="x-btn-badge">{badge}</span>
         )}
         <span className="x-btn-arrow" />
       </button>
       
       {open && (
-        <div className="x-menu" style={{ top: '100%', left: 0, marginTop: '2px' }}>
+        <div className="x-menu" style={{ top: '100%', left: 0, marginTop: 2 }}>
           {items.map((item, i) => 
             item.divider ? (
               <div key={i} className="x-menu-item-separator" />
@@ -219,7 +245,7 @@ function ToolbarDropdown({ icon, label, items, badge }: ToolbarDropdownProps) {
                   setOpen(false);
                 }}
               >
-                {item.icon && <img src={item.icon} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
+                {item.icon && <img src={item.icon} alt="" className="x-menu-item-icon" />}
                 <span>{item.label}</span>
               </div>
             )

@@ -1,4 +1,12 @@
-// Модальное окно деталей объекта
+/**
+ * VehicleDetailsModal — детали объекта (двойной клик по строке грида)
+ *
+ * Legacy: ObjectInfoWindow.js (Ext.window.Window)
+ * API: mapObjects.getLonLat(uid), objectSettings.loadObjectSettings(uid)
+ *
+ * Показывает: имя, IMEI, координаты, скорость, адрес,
+ * датчики, состояние блокировки, спящий блок.
+ */
 import { useState } from 'react';
 import { 
   MapPin, Activity, Gauge, Navigation, Battery, Thermometer,

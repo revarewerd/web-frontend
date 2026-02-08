@@ -1,4 +1,10 @@
-// Модальное окно отчёта по стоянкам
+/**
+ * ParkingReportModal — отчёт по стоянкам
+ *
+ * Legacy: ParkingReport.js
+ * API: parkingReport.loadData(uid, from, to)
+ * Поля: дата, длительность, адрес, мелкая/крупная.
+ */
 import { useState } from 'react';
 import { MapPin, Download, Search } from 'lucide-react';
 import { Modal } from './ModalManager';

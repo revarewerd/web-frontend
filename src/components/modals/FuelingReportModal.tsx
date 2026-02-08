@@ -1,4 +1,11 @@
-// Модальное окно отчёта по заправкам
+/**
+ * FuelingReportModal — отчёт по заправкам/сливам топлива
+ *
+ * Legacy: FuelingReport.js
+ * API: fuelingReport.loadData(uid, from, to)
+ * Поля: дата, тип (заправка/слив), объём, адрес.
+ * Требует настроенный датчик топлива на объекте.
+ */
 import { useState } from 'react';
 import { Fuel, Download, Search } from 'lucide-react';
 import { Modal } from './ModalManager';

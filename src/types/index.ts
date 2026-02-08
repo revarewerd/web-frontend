@@ -1,4 +1,21 @@
-// Типы для всего приложения
+/**
+ * =====================================================
+ * Типы данных мониторинга (пользовательская часть)
+ * =====================================================
+ *
+ * Данные приходят из legacy Ext.Direct сервисов:
+ *   Vehicle     ← mapObjects.loadObjects()    (MongoDB: objects)
+ *   Geozone     ← geozonesData.loadObjects()  (MongoDB: geoZonesState)
+ *   EventMessage← eventsMessages.loadObjects() (MongoDB: events)
+ *   NotificationRule ← notificationRules.loadObjects()
+ *   User/UserSettings ← userInfo.getSettings()
+ *
+ * В новой архитектуре:
+ *   Vehicle → device-manager REST API
+ *   Geozone → geozones-service REST API
+ *   Events  → notification-service WebSocket
+ *   User    → auth-service + user-service
+ */
 
 // === Объекты (транспорт) ===
 export interface Vehicle {
@@ -14,11 +31,11 @@ export interface Vehicle {
   lat: number;
   speed: number;
   course: number;
-  ignition: boolean;
+  ignition: boolean | string | number; // может быть 'unknown', 0, 1, true, false
   time: number; // timestamp последнего сообщения
   latestmsg: number;
   satelliteNum: number;
-  blocked: boolean;
+  blocked: boolean | 'wait'; // может быть true, false, или 'wait' (ожидание команды)
   hidden: boolean;
   checked: boolean;
   targeted: boolean;
@@ -236,6 +253,6 @@ export interface PaginatedResponse<T> {
 
 export interface UpdatesResponse {
   newTime: number;
-  data: EventMessage[];
+  data: LegacyEventMessage[];
   reload: boolean;
 }

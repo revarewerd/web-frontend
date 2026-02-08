@@ -1,77 +1,30 @@
-// Нижняя панель инструментов
-import { FileText, X } from 'lucide-react';
+/**
+ * BottomToolbar — нижняя панель (south region, таскбар)
+ *
+ * Legacy: app.js → bbar (reporttoolbar)
+ * Кнопка "Свернуть все окна" + иконки открытых окон.
+ * Каждое модальное окно добавляет toggle-кнопку сюда
+ * (как taskbar в Windows — можно свернуть/развернуть).
+ */
 import { useAppStore } from '@/store/appStore';
 
 export function BottomToolbar() {
-  const { openModal, vehicles } = useAppStore();
-
-  const selectedCount = vehicles.filter(v => v.checked).length;
+  const { openModal } = useAppStore();
 
   return (
-    <div className="bottom-toolbar h-[32px] flex items-center justify-between px-2">
-      {/* Левая часть - кнопки отчётов */}
-      <div className="flex items-center gap-1">
-        <button
-          className="btn btn-sm"
-          onClick={() => openModal('movingReport')}
-          disabled={selectedCount === 0}
-          title="Отчёт по пробегу"
-        >
-          <FileText size={14} />
-          <span>Пробег</span>
-        </button>
-
-        <button
-          className="btn btn-sm"
-          onClick={() => openModal('parkingReport')}
-          disabled={selectedCount === 0}
-          title="Отчёт по стоянкам"
-        >
-          <FileText size={14} />
-          <span>Стоянки</span>
-        </button>
-
-        <button
-          className="btn btn-sm"
-          onClick={() => openModal('fuelingReport')}
-          disabled={selectedCount === 0}
-          title="Отчёт по заправкам"
-        >
-          <FileText size={14} />
-          <span>Заправки</span>
-        </button>
-
-        <button
-          className="btn btn-sm"
-          onClick={() => openModal('trackDisplay')}
-          disabled={selectedCount === 0}
-          title="Показать трек"
-        >
-          <FileText size={14} />
-          <span>Трек</span>
-        </button>
-
-        <div className="border-l border-gray-300 h-4 mx-2" />
-
-        <span className="text-xs text-gray-600">
-          Выбрано объектов: <strong>{selectedCount}</strong>
-        </span>
-      </div>
-
-      {/* Правая часть */}
-      <div className="flex items-center gap-1">
-        <button
-          className="btn btn-sm"
-          onClick={() => {
-            // Сбросить выбор всех объектов
-            // TODO: Добавить action в store
-          }}
-          title="Скрыть все окна"
-        >
-          <X size={14} />
-          <span>Скрыть всё</span>
-        </button>
-      </div>
+    <div className="x-toolbar-south">
+      {/* Скрыть все окна */}
+      <button 
+        className="x-btn x-btn-medium"
+        onClick={() => {
+          // TODO: скрыть все модальные окна
+        }}
+        title="Скрыть все окна"
+      >
+        <img src="/images/ico24_hideall2.png" alt="" className="x-btn-icon ico24" />
+      </button>
+      
+      <div className="x-toolbar-separator" />
     </div>
   );
 }

@@ -1,4 +1,12 @@
-// Модальное окно настроек пользователя
+/**
+ * UserSettingsModal — настройки пользователя
+ *
+ * Legacy: UserSettingsWindow.js
+ * API: userInfo.getSettings() / userInfo.updateSettings()
+ *
+ * Настройки: пароль, email, телефон, часовой пояс,
+ * кластеризация, показ маркеров, тип карты.
+ */
 import { useState, useEffect } from 'react';
 import { Save } from 'lucide-react';
 import { Modal } from './ModalManager';
