@@ -245,6 +245,48 @@ export interface User {
   balance?: number;
 }
 
+// === Оконная система (замена Ext.window.Window) ===
+
+/** Описание типа окна: размеры по умолчанию, иконка, заголовок */
+export interface WindowTypeConfig {
+  type: string;
+  title: string;
+  icon?: string;
+  defaultWidth: number;
+  defaultHeight: number;
+  /** Минимальные размеры окна */
+  minWidth?: number;
+  minHeight?: number;
+  /** Можно ли открыть несколько экземпляров этого типа */
+  allowMultiple?: boolean;
+}
+
+/** Экземпляр открытого окна в менеджере */
+export interface WindowInstance {
+  /** Уникальный ID экземпляра окна */
+  id: string;
+  /** Тип окна (geozones, vehicleDetails, etc.) */
+  type: string;
+  /** Заголовок окна */
+  title: string;
+  /** Иконка в заголовке */
+  icon?: string;
+  /** Позиция X (left) в пикселях */
+  x: number;
+  /** Позиция Y (top) в пикселях */
+  y: number;
+  /** Ширина окна */
+  width: number;
+  /** Высота окна */
+  height: number;
+  /** Окно свёрнуто в таскбар */
+  minimized: boolean;
+  /** Z-index для порядка наложения окон */
+  zIndex: number;
+  /** Пропсы для содержимого окна */
+  props: Record<string, unknown>;
+}
+
 // === Общие типы ===
 export interface PaginatedResponse<T> {
   items: T[];

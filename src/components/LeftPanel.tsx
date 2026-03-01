@@ -1,5 +1,5 @@
 /**
- * LeftPanel — левая панель 420px (west region)
+ * LeftPanel — левая панель (west region, ресайзируемая)
  *
  * Legacy: LeftPanel.js + mapobject/List.js (Ext.grid.Panel)
  * API: mapObjects.loadObjects() + mapObjects.getUpdatedAfter() (polling 2сек)
@@ -15,6 +15,8 @@
  *
  * Поиск: фильтрация по имени в реальном времени.
  * Действия (выпадающее меню): Выбрать все, Показать все, Скрыть все.
+ *
+ * Ширина динамическая — управляется из store через Splitter.
  */
 // Табы: Объекты / Группы
 // Грид с колонками: onMap(20px), name(flex), speed(24px), lastMsg(24px), tracing(24px)
@@ -50,7 +52,8 @@ export function LeftPanel() {
     toggleVehicleChecked,
     updateVehicle,
     toggleVehicleTargeted,
-    openModal 
+    openModal,
+    leftPanelWidth,
   } = useAppStore();
   
   // toggleVehicleOnMap меняет поле checked (показ на карте)
@@ -98,7 +101,7 @@ export function LeftPanel() {
   };
 
   return (
-    <div className="left-panel">
+    <div className="left-panel" style={{ width: leftPanelWidth }}>
       {/* Тулбар грида - как dockedItems toolbar в List.js */}
       <div className="left-panel-toolbar">
         {/* Поиск */}

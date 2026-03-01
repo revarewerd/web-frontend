@@ -3,23 +3,21 @@
  *
  * Legacy: app.js → Ext.container.Viewport с border layout:
  *   north:  Toolbar (верхняя панель с меню)
- *   west:   LeftPanel 420px (список объектов/групп)
+ *   west:   LeftPanel (ресайзируемый список объектов/групп)
  *   center: MapView (OpenLayers карта)
  *   south:  BottomToolbar (таскбар открытых окон)
  *
- * + ModalManager — рендерит модальные окна поверх всего.
+ * Новое: Splitter между west и center для ресайза LeftPanel.
+ * WindowManager рендерит плавающие окна поверх всего (без backdrop).
  * CSS: index.css → .app-layout, .left-panel, .map-container
  */
-// region: west = leftpanel (width: 420)
-// region: center = mainmap
-// region: south = reporttoolbar
-
 import { useState, useEffect } from 'react';
 import { Toolbar } from './Toolbar';
 import { LeftPanel } from './LeftPanel';
 import { MapView } from './MapView';
+import { Splitter } from './Splitter';
 import { BottomToolbar } from './BottomToolbar';
-import { ModalManager } from './modals/ModalManager';
+import { WindowManager } from './WindowManager';
 import { useAppStore } from '@/store/appStore';
 import { fetchVehicles, fetchGeozones, fetchCurrentUser, fetchUserSettings, getUnreadMessagesCount } from '@/api/mock';
 
@@ -30,6 +28,7 @@ export function AppLayout() {
     setUser,
     setUserSettings,
     setUnreadCount,
+    leftPanelCollapsed,
   } = useAppStore();
 
   const [loading, setLoading] = useState(true);
@@ -77,20 +76,23 @@ export function AppLayout() {
       {/* North - Toolbar */}
       <Toolbar />
       
-      {/* Main container (center + west) */}
+      {/* Main container (west + splitter + center) */}
       <div className="main-container">
-        {/* West - Left Panel (width: 420 как в оригинале) */}
-        <LeftPanel />
+        {/* West - Left Panel (ресайзируемая, сворачиваемая) */}
+        {!leftPanelCollapsed && <LeftPanel />}
+        
+        {/* Splitter (разделитель west/center) */}
+        <Splitter />
         
         {/* Center - Map */}
         <MapView />
       </div>
       
-      {/* South - Bottom Toolbar */}
+      {/* South - Bottom Toolbar (таскбар открытых окон) */}
       <BottomToolbar />
       
-      {/* Modals */}
-      <ModalManager />
+      {/* Плавающие окна (без backdrop, поверх всего) */}
+      <WindowManager />
     </div>
   );
 }

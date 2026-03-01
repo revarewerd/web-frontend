@@ -305,15 +305,15 @@ body {
   padding-left: 5px;
 }
 
-/* === Left Panel (west region) === */
+/* === Left Panel (west region, ресайзируемая) === */
 .left-panel {
-  width: 420px;
   border-right: 1px solid var(--ext-border);
   display: flex;
   flex-direction: column;
   background: #fff;
   flex-shrink: 0;
   overflow: hidden;
+  /* Ширина управляется через style={{ width: leftPanelWidth }} из store */
 }
 
 /* === Left Panel Toolbar === */
@@ -527,4 +527,245 @@ body {
 /* === Hide display === */
 .x-hide-display {
   display: none !important;
+}
+
+/* === Splitter (разделитель west/center, аналог ExtJS splitter) === */
+.x-splitter {
+  width: 6px;
+  background: linear-gradient(to right, #e0e0e0 0%, #d0d0d0 50%, #e0e0e0 100%);
+  border-left: 1px solid var(--ext-border);
+  border-right: 1px solid var(--ext-border);
+  cursor: col-resize;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 5;
+}
+
+.x-splitter:hover {
+  background: linear-gradient(to right, #c0d8f0 0%, #a8c8e8 50%, #c0d8f0 100%);
+}
+
+.x-splitter:active {
+  background: linear-gradient(to right, #a0c0e0 0%, #88b0d8 50%, #a0c0e0 100%);
+}
+
+.x-splitter-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.x-splitter-dots span {
+  width: 3px;
+  height: 3px;
+  background: #999;
+  border-radius: 50%;
+}
+
+.x-splitter:hover .x-splitter-dots span {
+  background: #666;
+}
+
+/* === Floating Window (замена Ext.window.Window) === */
+.x-floating-window {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #99bce8;
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  /* Убираем max-height для фиксированных окон */
+  max-height: none;
+}
+
+.x-floating-window .x-window-body {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+/* Активное окно — граница ярче */
+.x-window-active {
+  box-shadow: 2px 2px 16px rgba(0,0,0,0.4);
+  border-color: #6699cc;
+}
+
+/* Неактивный заголовок — серый */
+.x-window-header-inactive {
+  background: linear-gradient(to bottom, #d8d8d8 0%, #c0c0c0 100%) !important;
+  border-bottom-color: #b0b0b0 !important;
+}
+
+.x-window-header-inactive .x-window-header-text {
+  color: #666 !important;
+}
+
+/* Активный заголовок — синий (по умолчанию из .x-window-header) */
+.x-window-header-active {
+  background: linear-gradient(to bottom, #c8ddf3 0%, #98c0f4 100%);
+  border-bottom: 1px solid #99bce8;
+}
+
+/* Кнопки в заголовке окна */
+.x-window-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.x-tool-btn {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #666;
+  background: none;
+  border: none;
+  border-radius: 2px;
+  padding: 0;
+}
+
+.x-tool-btn:hover {
+  background: rgba(0,0,0,0.1);
+  color: #333;
+}
+
+.x-tool-minimize {
+  font-weight: bold;
+  line-height: 1;
+  position: relative;
+  top: -2px;
+}
+
+/* === Resize Handles (8 направлений как в ExtJS) === */
+.x-resize-handle {
+  position: absolute;
+  z-index: 10;
+}
+
+.x-resize-n {
+  top: -3px;
+  left: 4px;
+  right: 4px;
+  height: 6px;
+  cursor: n-resize;
+}
+
+.x-resize-s {
+  bottom: -3px;
+  left: 4px;
+  right: 4px;
+  height: 6px;
+  cursor: s-resize;
+}
+
+.x-resize-e {
+  top: 4px;
+  right: -3px;
+  bottom: 4px;
+  width: 6px;
+  cursor: e-resize;
+}
+
+.x-resize-w {
+  top: 4px;
+  left: -3px;
+  bottom: 4px;
+  width: 6px;
+  cursor: w-resize;
+}
+
+.x-resize-ne {
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  cursor: ne-resize;
+}
+
+.x-resize-nw {
+  top: -3px;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  cursor: nw-resize;
+}
+
+.x-resize-se {
+  bottom: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  cursor: se-resize;
+}
+
+.x-resize-sw {
+  bottom: -3px;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  cursor: sw-resize;
+}
+
+/* === Taskbar (таскбар в нижней панели) === */
+.x-taskbar {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  align-items: center;
+}
+
+.x-taskbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: linear-gradient(to bottom, #f7f7f7 0%, #e3e3e3 100%);
+  border: 1px solid #bbbbbb;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: tahoma, arial, verdana, sans-serif;
+  color: var(--ext-text);
+  white-space: nowrap;
+  max-width: 160px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.x-taskbar-btn:hover {
+  background: linear-gradient(to bottom, #e4e4e4 0%, #d1d1d1 100%);
+  border-color: #8db2e3;
+}
+
+.x-taskbar-btn-active {
+  background: linear-gradient(to bottom, #c8ddf3 0%, #a8c4e8 100%);
+  border-color: #6699cc;
+  font-weight: bold;
+}
+
+.x-taskbar-btn-minimized {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.x-taskbar-btn-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* === Small button variant === */
+.x-btn-small {
+  height: 24px;
+  padding: 2px 4px;
 }
