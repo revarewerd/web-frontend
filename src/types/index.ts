@@ -218,10 +218,13 @@ export interface FuelingReportItem {
 export interface UserSettings {
   molcmpwdth?: number; // ширина левой панели
   timezone?: string;
-  language?: 'ru' | 'en' | 'es';
-  mapType?: 'osm' | 'google' | 'yandex';
+  language?: 'ru' | 'en' | 'es' | 'uk' | 'kk';
+  mapType?: 'osm' | 'google' | 'yandex' | 'satellite';
   showPopupNotifications?: boolean;
   showUnreadNotificationsCount?: boolean;
+  refreshInterval?: number;
+  showOffline?: boolean;
+  soundEnabled?: boolean;
 }
 
 // === Группы объектов ===

@@ -46,7 +46,7 @@ export function VehicleDetailsModal({ data, onClose }: VehicleDetailsModalProps)
     setCommandResult(null);
     try {
       const result = await mockApi.sendBlockCommand(vehicle.id, !vehicle.blocked);
-      setCommandResult(result.message);
+      setCommandResult(result.message ?? null);
       
       // Обновляем состояние объекта
       setVehicles(vehicles.map(v => 
@@ -62,7 +62,7 @@ export function VehicleDetailsModal({ data, onClose }: VehicleDetailsModalProps)
     setCommandResult(null);
     try {
       const result = await mockApi.sendGetCoordsCommand(vehicle.id);
-      setCommandResult(result.message);
+      setCommandResult(result.message ?? null);
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export function VehicleDetailsModal({ data, onClose }: VehicleDetailsModalProps)
     setCommandResult(null);
     try {
       const result = await mockApi.sendRestartCommand(vehicle.id);
-      setCommandResult(result.message);
+      setCommandResult(result.message ?? null);
     } finally {
       setLoading(false);
     }

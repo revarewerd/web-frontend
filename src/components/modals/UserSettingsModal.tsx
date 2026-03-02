@@ -58,7 +58,7 @@ export function UserSettingsModal({ onClose }: UserSettingsModalProps) {
           <select
             className="form-input"
             value={formData.language}
-            onChange={e => setFormData({ ...formData, language: e.target.value })}
+            onChange={e => setFormData({ ...formData, language: e.target.value as UserSettings['language'] })}
           >
             <option value="ru">Русский</option>
             <option value="en">English</option>
@@ -87,7 +87,7 @@ export function UserSettingsModal({ onClose }: UserSettingsModalProps) {
           <select
             className="form-input"
             value={formData.mapType}
-            onChange={e => setFormData({ ...formData, mapType: e.target.value })}
+            onChange={e => setFormData({ ...formData, mapType: e.target.value as UserSettings['mapType'] })}
           >
             <option value="osm">OpenStreetMap</option>
             <option value="google">Google Maps</option>
