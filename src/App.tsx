@@ -3,27 +3,19 @@
  * MONITORING WEB — Пользовательская панель мониторинга
  * =====================================================
  *
- * Это МОНИТОРИНГ — для пользователей (не админов).
- * Карта + трекеры + уведомления + отчёты + геозоны.
- *
- * Legacy аналог: /monitoring/index.html (ExtJS 4.2.1 Gray Theme + OpenLayers 2.x)
- * Legacy Java:   ru.sosgps.wayrecall.monitoring.web.* (Ext.Direct RPC)
- * API контракт:  docs/MONITORING_API_CONTRACT.md (~76 Ext.Direct методов)
- *
- * ⚠️ Вторая вебка проекта — web-billing (services/web-billing/) — это
- * административная панель для управления учётками, тарифами, оборудованием.
- * API контракт биллинга: docs/BILLING_API_CONTRACT.md
+ * Роутинг по роли:
+ *   Не авторизован → LoginPage (вход по номеру телефона)
+ *   user           → AppLayout (мониторинг, карта с трекерами)
+ *   admin          → AppLayout (тот же мониторинг, позже → биллинг-админка)
  *
  * Стек: React 19 + TypeScript + Vite + TailwindCSS 4 + Zustand (state)
  *       + TanStack Query (кеширование API) + OpenLayers 10 (карта)
- *
- * TanStack Query (ниже) — замена legacy Ext.data.Store:
- *   staleTime: 1 мин — данные считаются свежими 1 минуту
- *   refetchOnWindowFocus: false — не перезапрашиваем при фокусе окна
- *   В будущем: polling каждые 2 сек для mapObjects.getUpdatedAfter()
  */
+import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppLayout } from './components/AppLayout';
+import { LoginPage } from './pages/LoginPage';
+import { getToken, clearToken } from './api/client';
 import './index.css';
 
 // Создаём QueryClient для TanStack Query
@@ -36,10 +28,82 @@ const queryClient = new QueryClient({
   },
 });
 
+/** UTF-8 safe Base64 → string (обратная utf8ToBase64 из LoginPage) */
+function base64ToUtf8(b64: string): string {
+  return decodeURIComponent(
+    atob(b64)
+      .split('')
+      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
+  );
+}
+
+/** Парсинг JWT payload из mock-токена */
+function parseToken(token: string): { role: string; orgId: number; name: string; exp: number } | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+    const payload = JSON.parse(base64ToUtf8(parts[1]));
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
 function App() {
+  const [auth, setAuth] = useState<{ role: string; orgId: number } | null>(null);
+  const [checking, setChecking] = useState(true);
+
+  // При загрузке проверяем сохранённый токен
+  useEffect(() => {
+    const token = getToken();
+    if (token) {
+      const payload = parseToken(token);
+      if (payload && payload.exp > Date.now()) {
+        setAuth({ role: payload.role, orgId: payload.orgId });
+      } else {
+        clearToken(); // Токен истёк или невалиден
+      }
+    }
+    setChecking(false);
+  }, []);
+
+  // Слушаем событие logout (401 от API)
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      clearToken();
+      setAuth(null);
+    };
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+  }, []);
+
+  const handleLogin = (role: 'user' | 'admin', orgId: number) => {
+    setAuth({ role, orgId });
+  };
+
+  const handleLogout = () => {
+    clearToken();
+    setAuth(null);
+  };
+
+  if (checking) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#fff' }}>
+        <div style={{ color: '#999', fontSize: 11, fontFamily: 'tahoma, arial, sans-serif' }}>Загрузка...</div>
+      </div>
+    );
+  }
+
+  // Не авторизован → логин
+  if (!auth) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
+  // Авторизован → мониторинг (для user и admin одинаково, позже admin → биллинг)
   return (
     <QueryClientProvider client={queryClient}>
-      <AppLayout />
+      <AppLayout orgId={auth.orgId} role={auth.role} onLogout={handleLogout} />
     </QueryClientProvider>
   );
 }

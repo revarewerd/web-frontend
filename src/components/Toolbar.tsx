@@ -15,6 +15,7 @@
  */
 import { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '@/store/appStore';
+import { clearToken } from '@/api/client';
 
 export function Toolbar() {
   const { user, unreadCount, openModal } = useAppStore();
@@ -154,7 +155,8 @@ export function Toolbar() {
         tooltip="Выход из системы"
         onClick={() => {
           if (confirm('Выйти из системы?')) {
-            window.location.href = '/logout';
+            clearToken();
+            window.location.reload();
           }
         }}
       />

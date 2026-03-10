@@ -15,10 +15,13 @@ RUN npm ci --silent
 COPY . .
 
 # API URL передаётся на этапе сборки через build arg
-ARG VITE_API_URL=http://localhost:8092
+# В Docker nginx проксирует /api/ → api-gateway:8080, поэтому используем относительный путь
+ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
 
-ARG VITE_WS_URL=ws://localhost:8094
+# WS URL — через nginx прокси /ws/ → websocket-service:8090
+# Относительный URL: ws://host/ws (nginx добавит upgrade headers)
+ARG VITE_WS_URL=
 ENV VITE_WS_URL=$VITE_WS_URL
 
 # Собираем только Vite (без tsc — TS ошибки не блокируют сборку)

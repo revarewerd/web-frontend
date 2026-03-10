@@ -298,7 +298,7 @@ function VehiclePopup({ vehicle, onClose }: VehiclePopupProps) {
         </div>
         <div className="flex justify-between">
           <span className="text-gray-500">Координаты:</span>
-          <span>{vehicle.lat.toFixed(5)}, {vehicle.lon.toFixed(5)}</span>
+          <span>{(vehicle.lat ?? 0).toFixed(5)}, {(vehicle.lon ?? 0).toFixed(5)}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-500">Последнее сообщение:</span>
